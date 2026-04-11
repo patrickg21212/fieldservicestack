@@ -1,0 +1,23 @@
+name: Update Sitemap & Notify Google
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/content/reviews/**'
+      - 'src/content/comparisons/**'
+      - 'src/content/guides/**'
+      - 'src/content/gear/**'
+      - 'public/images/posts/**'
+
+permissions:
+  contents: write
+
+jobs:
+  ping-google:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Google with updated sitemap
+        run: |
+          curl -s "https://www.google.com/ping?sitemap=https://fieldservicestack.com/sitemap-index.xml"
+          echo "Google pinged with sitemap update"
