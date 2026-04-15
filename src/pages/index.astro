@@ -26,6 +26,29 @@ const allPosts = [
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
   .slice(0, 6);
 
+const webSiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Field Service Stack',
+  url: 'https://fieldservicestack.com',
+  description: 'Independent software reviews, comparisons, and buyer\'s guides for field service professionals.',
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: 'https://fieldservicestack.com/?s={search_term_string}',
+    'query-input': 'required name=search_term_string',
+  },
+};
+
+const orgSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Field Service Stack',
+  url: 'https://fieldservicestack.com',
+  logo: 'https://fieldservicestack.com/images/og-image.png',
+  description: 'Independent reviews, comparisons, and buyer\'s guides for field service professionals.',
+  sameAs: ['https://epiphanydynamics.ai'],
+};
+
 const categories = [
   {
     title: 'Software Reviews',
@@ -53,6 +76,7 @@ const categories = [
 <Base
   title="Field Service Stack - Software Reviews for Service Businesses"
   description="Independent software reviews, comparisons, and buyer's guides for field service professionals. Find the right tools for your business."
+  schema={[webSiteSchema, orgSchema]}
 >
   <!-- Hero -->
   <section class="py-10 md:py-16">

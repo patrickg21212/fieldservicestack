@@ -48,9 +48,66 @@ const formattedUpdated = updated
       day: 'numeric',
     })
   : null;
+
+// --- Schema.org ---
+const pageURL = Astro.url.href;
+const pathParts = Astro.url.pathname.split('/').filter(Boolean);
+const sectionSlug = pathParts[0] ?? 'reviews';
+const sectionLabels: Record<string, string> = {
+  reviews: 'Reviews',
+  compare: 'Comparisons',
+  guides: "Buyer's Guides",
+  gear: 'Tools & Gear',
+};
+const sectionLabel = sectionLabels[sectionSlug] ?? 'Articles';
+const sectionURL = new URL(`/${sectionSlug}/`, Astro.site).href;
+
+const publisher = {
+  '@type': 'Organization',
+  name: 'Field Service Stack',
+  url: 'https://fieldservicestack.com',
+  logo: { '@type': 'ImageObject', url: 'https://fieldservicestack.com/images/og-image.png' },
+};
+
+const articleSchema = rating !== undefined
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'Review',
+      headline: title,
+      description,
+      author: { '@type': 'Person', name: author },
+      publisher,
+      datePublished: date.toISOString().split('T')[0],
+      dateModified: (updated ?? date).toISOString().split('T')[0],
+      mainEntityOfPage: { '@type': 'WebPage', '@id': pageURL },
+      reviewRating: { '@type': 'Rating', ratingValue: rating, bestRating: 10, worstRating: 0 },
+      ...(image ? { image: new URL(image, Astro.site).href } : {}),
+    }
+  : {
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: title,
+      description,
+      author: { '@type': 'Person', name: author },
+      publisher,
+      datePublished: date.toISOString().split('T')[0],
+      dateModified: (updated ?? date).toISOString().split('T')[0],
+      mainEntityOfPage: { '@type': 'WebPage', '@id': pageURL },
+      ...(image ? { image: new URL(image, Astro.site).href } : {}),
+    };
+
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://fieldservicestack.com' },
+    { '@type': 'ListItem', position: 2, name: sectionLabel, item: sectionURL },
+    { '@type': 'ListItem', position: 3, name: title, item: pageURL },
+  ],
+};
 ---
 
-<Base title={seoTitle} description={description}>
+<Base title={seoTitle} description={description} schema={[articleSchema, breadcrumbSchema]}>
   <article class="py-8 md:py-12">
     <!-- Post Header -->
     <header class="max-w-[65ch] mx-auto mb-8 md:mb-12 border-b border-border pb-8">
